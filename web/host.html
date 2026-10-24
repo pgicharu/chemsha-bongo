@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Host a game · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/game.css" />
+  </head>
+  <body class="host">
+    <div class="trim"></div>
+
+    <header class="host-bar">
+      <span class="host-bar__title" id="quiz-title">Chemsha Bongo</span>
+      <span class="host-bar__code" id="bar-code" hidden></span>
+      <span class="host-bar__status" id="connection" role="status" aria-live="polite"></span>
+    </header>
+
+    <main class="host-stage">
+      <section data-screen="loading" class="host-center">
+        <p class="host-message">Setting up your game…</p>
+      </section>
+
+      <section data-screen="error" class="host-center" hidden>
+        <h1 id="error-title">Something went wrong</h1>
+        <p class="host-message" id="error-text"></p>
+        <a class="button" href="/quizzes">Back to My quizzes</a>
+      </section>
+
+      <section data-screen="lobby" class="lobby" hidden>
+        <div class="lobby__join">
+          <img class="lobby__qr" id="join-qr" alt="" hidden />
+          <p class="lobby__how">Scan, or join on your phone at</p>
+          <p class="lobby__url" id="join-url"></p>
+          <p class="lobby__how">or enter the code</p>
+          <p class="lobby__code" id="lobby-code" aria-label="Game code"></p>
+        </div>
+        <div class="lobby__players">
+          <h2 class="lobby__count"><span id="player-count">0</span> <span id="player-word">players</span></h2>
+          <p class="lobby__waiting" id="lobby-empty">Waiting for players…</p>
+          <ul class="avatar-grid" id="lobby-players"></ul>
+          <!-- Shown only when ALLOW_BOTS=true (src/bots/routes.js). -->
+          <p class="lobby__bots" id="bots" hidden>
+            <button type="button" class="button button--quiet" id="add-bots">Add 5 bots</button>
+            <span class="lobby__bots-status" id="bots-status" role="status" aria-live="polite"></span>
+          </p>
+        </div>
+      </section>
+
+      <section data-screen="question" class="host-question" hidden>
+        <div class="q-head">
+          <p class="q-count" id="q-count"></p>
+          <p class="timer" id="q-timer" aria-label="Seconds left">0</p>
+          <p class="q-progress"><span id="q-answered">0</span> / <span id="q-total">0</span> answered</p>
+        </div>
+        <h1 class="q-prompt" id="q-prompt"></h1>
+        <div class="host-answers" id="q-options"></div>
+      </section>
+
+      <section data-screen="reveal" class="host-reveal" hidden>
+        <div class="q-head">
+          <p class="q-count" id="r-count"></p>
+        </div>
+        <h1 class="q-prompt q-prompt--small" id="r-prompt"></h1>
+        <div class="chart" id="r-chart" role="img"></div>
+      </section>
+
+      <section data-screen="leaderboard" class="host-board" hidden>
+        <h1 class="host-heading" id="board-title">Top 5</h1>
+        <ol class="board" id="board"></ol>
+      </section>
+
+      <section data-screen="finished" class="host-board" hidden>
+        <h1 class="host-heading">Final results</h1>
+        <ol class="podium" id="final-podium"></ol>
+        <ol class="board board--rest" id="final-board" start="4"></ol>
+        <p class="host-message" id="final-note"></p>
+        <a class="button" href="/quizzes">Back to My quizzes</a>
+      </section>
+    </main>
+
+    <footer class="host-controls" id="controls" hidden>
+      <button type="button" class="button button--quiet" id="end-button">End game</button>
+      <span class="host-controls__hint">→ or Space for next</span>
+      <button type="button" class="button button--next" id="next-button">Start</button>
+    </footer>
+
+    <script type="module" src="./js/game/host.js"></script>
+  </body>
+</html>

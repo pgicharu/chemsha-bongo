@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Take the quiz · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/game.css" />
+    <link rel="stylesheet" href="./css/selfpaced.css" />
+  </head>
+  <body class="play">
+    <div class="trim"></div>
+
+    <header class="play-bar">
+      <span class="play-bar__title" id="quiz-title">Chemsha Bongo</span>
+      <span class="play-bar__score" id="bar-score" hidden></span>
+    </header>
+
+    <main class="play-stage">
+      <section data-screen="loading" class="play-center">
+        <p class="play-big">Loading…</p>
+      </section>
+
+      <section data-screen="intro" class="play-center" hidden>
+        <h1 id="intro-title"></h1>
+        <ul class="take-rules">
+          <li id="intro-count"></li>
+          <li>Each question has its own timer. Answer before it runs out: the faster, the more points.</li>
+          <li>You get one attempt. Once a question is on screen its clock keeps running, even if you leave.</li>
+          <li id="intro-due" hidden></li>
+        </ul>
+        <button class="button button--wide" type="button" id="intro-go">Start</button>
+      </section>
+
+      <section data-screen="question" class="play-question" hidden>
+        <div class="play-qhead">
+          <p class="play-qcount" id="q-count"></p>
+          <p class="timer timer--small" id="q-timer" aria-label="Seconds left">0</p>
+        </div>
+        <h1 class="play-prompt" id="q-prompt"></h1>
+        <div class="play-answers" id="q-options"></div>
+        <p class="play-error" id="q-error" role="alert"></p>
+      </section>
+
+      <section data-screen="feedback" class="play-center" hidden>
+        <p class="result-badge" id="fb-badge"></p>
+        <p class="play-big" id="fb-points"></p>
+        <div class="play-correct" id="fb-correct" hidden>
+          <p id="fb-correct-label">The answer was</p>
+          <div id="fb-correct-tile"></div>
+        </div>
+        <dl class="stats take-stats">
+          <div><dt>Total</dt><dd id="fb-total"></dd></div>
+        </dl>
+        <button class="button button--wide" type="button" id="fb-next">Next question</button>
+      </section>
+
+      <section data-screen="timeup" class="play-center" hidden>
+        <p class="result-badge result-badge--late">Time's up!</p>
+        <p>No answer for this question: 0 points.</p>
+        <button class="button button--wide" type="button" id="timeup-next">Next question</button>
+      </section>
+
+      <section data-screen="finished" class="play-center" hidden>
+        <h1 id="final-title">All done!</h1>
+        <p class="play-big" id="final-line"></p>
+        <dl class="stats">
+          <div><dt>Score</dt><dd id="final-score"></dd></div>
+          <div><dt>Correct</dt><dd id="final-correct"></dd></div>
+        </dl>
+        <a class="button button--wide" href="/">Home</a>
+      </section>
+
+      <section data-screen="error" class="play-center" hidden>
+        <h1 id="error-title">Hmm.</h1>
+        <p class="play-big" id="error-text"></p>
+        <a class="button button--wide" id="error-action" href="/">Home</a>
+      </section>
+    </main>
+
+    <script type="module" src="./js/selfpaced/take.js"></script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Your avatar · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/avatar.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page avatar-page">
+      <h1>Your avatar</h1>
+      <p class="avatar-intro">
+        Pick a style, then change anything you like. Other players see your avatar in the lobby and on the leaderboard.
+      </p>
+
+      <p id="loading">Loading the avatar builder…</p>
+
+      <!-- Filled in by js/avatar/builder.js. -->
+      <form class="builder" id="builder" hidden>
+        <section class="builder__preview" aria-label="Preview">
+          <div class="preview">
+            <img class="preview__image" id="preview" width="240" height="240" alt="Preview of your avatar" />
+          </div>
+          <div class="builder__actions">
+            <button class="button" type="submit" id="save-button">Save</button>
+            <button class="button button--plain" type="button" id="random-button">Random</button>
+            <button class="button button--plain" type="button" id="reset-button">Reset to saved</button>
+          </div>
+          <p class="builder__unsaved" id="unsaved" hidden>Not saved yet</p>
+          <p class="notice builder__notice" id="notice" role="status" tabindex="-1"></p>
+        </section>
+
+        <div class="builder__pickers">
+          <fieldset class="picker">
+            <legend class="picker__legend">Style</legend>
+            <div class="picker__options picker__options--styles" id="style-options"></div>
+          </fieldset>
+          <div id="part-pickers"></div>
+        </div>
+      </form>
+    </main>
+    <script type="module" src="./js/avatar/builder.js"></script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Quiz editor · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/quizzes.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page page--wide">
+      <p class="back"><a href="/quizzes">← My quizzes</a></p>
+      <h1 id="heading">New quiz</h1>
+
+      <p id="loading" hidden>Loading the quiz…</p>
+      <p class="notice notice--error" id="load-error" hidden></p>
+
+      <p class="notice notice--warn" id="unconfirmed" hidden></p>
+      <div class="notice notice--warn" id="locked" hidden>
+        <p>
+          People have already played this quiz, so its questions are locked: their results point at them.
+          You can still change the title, mode and due date.
+        </p>
+        <button type="button" class="button button--small" id="duplicate">Duplicate to change the questions</button>
+      </div>
+
+      <form id="quiz-form" novalidate hidden>
+        <div class="error-summary" id="error-summary" tabindex="-1" hidden></div>
+
+        <div class="field">
+          <label for="title">Title</label>
+          <input class="input" id="title" name="title" type="text" maxlength="120" autocomplete="off" data-field="title"
+            placeholder="e.g. Kenyan capitals" />
+        </div>
+
+        <fieldset class="field" data-field="mode">
+          <legend>How will people play it?</legend>
+          <div class="segmented">
+            <label class="segmented__option">
+              <input type="radio" name="mode" value="live" checked />
+              <span>Live</span>
+            </label>
+            <label class="segmented__option">
+              <input type="radio" name="mode" value="self_paced" />
+              <span>Self-paced</span>
+            </label>
+          </div>
+          <p class="hint" id="mode-hint"></p>
+        </fieldset>
+
+        <div class="field" id="due-field" hidden>
+          <label for="due_at">Due date <span class="optional">(optional)</span></label>
+          <input class="input" id="due_at" name="due_at" type="datetime-local" data-field="due_at" />
+          <p class="hint">After this time, nobody can start the quiz. Leave it empty to keep it open.</p>
+        </div>
+
+        <h2>Questions</h2>
+        <div class="import-box" id="import-box">
+          <p class="import-box__text">
+            Got your questions in a spreadsheet? Save it as CSV, one question per row.
+            <a href="/quiz-template.csv" download="chemsha-quiz-template.csv">Download the template</a>
+          </p>
+          <button type="button" class="button button--plain button--small" id="import-button">Import from CSV</button>
+          <input type="file" id="import-file" accept=".csv,text/csv" hidden />
+          <div class="notice" id="import-status" role="status" aria-live="polite" hidden></div>
+        </div>
+        <div data-field="questions" tabindex="-1"></div>
+        <ol class="question-list" id="questions"></ol>
+        <button type="button" class="button button--plain" id="add-question">+ Add question</button>
+
+        <div class="save-bar">
+          <button type="submit" class="button button--big" id="save">Save quiz</button>
+          <p class="save-status" id="save-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </main>
+    <script type="module" src="./js/quizzes/editor.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+/*
+ * Theme: Matatu Mural. A theme is only this file: every other stylesheet uses
+ * these variables and never a raw colour or font, so a new look is a copy of
+ * this file with the <link> in the HTML pages pointed at it.
+ */
+
+@import '@fontsource/bungee/400.css';
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';
+
+:root {
+  --font-display: 'Bungee', 'Arial Black', sans-serif;
+  --font-body: 'Atkinson Hyperlegible', system-ui, sans-serif;
+
+  --color-bg: #141414;
+  --color-surface: #1f1f1f;
+  --color-surface-raised: #2a2a2a;
+  --color-text: #f4f1ea;
+  --color-text-muted: #b9b4a8;
+  --color-accent: #ff2e88;
+  --color-accent-text: #141414;
+  --color-success: #00a651;
+  --color-on-success: #141414;
+  /* Darker than answer A's red so small white text on it passes WCAG AA. */
+  --color-danger: #d12f22;
+  --color-on-danger: #ffffff;
+  --color-warning: #f5b700;
+  --color-on-warning: #141414;
+  --color-border: #f4f1ea;
+  --color-focus: #f4f1ea;
+  --color-shadow: #000000;
+
+  /* Each answer also has a shape and letter, so none relies on colour alone. */
+  --answer-a-bg: #e63b2e;  --answer-a-fg: #ffffff;   /* ▲ A  chili red */
+  --answer-b-bg: #1f6feb;  --answer-b-fg: #ffffff;   /* ◆ B  electric blue */
+  --answer-c-bg: #f5b700;  --answer-c-fg: #141414;   /* ● C  maize */
+  --answer-d-bg: #00a651;  --answer-d-fg: #141414;   /* ■ D  Kenyan green */
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --border-width: 3px;
+  --shadow-hard: 6px 6px 0 var(--color-shadow);
+  --shadow-pressed: 3px 3px 0 var(--color-shadow);
+  --shadow-text: 4px 4px 0 var(--color-shadow);
+
+  /* Animations are switched off under prefers-reduced-motion (base.css). */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-quick: 160ms;
+  --duration-enter: 420ms;
+
+  --trim-stripes: repeating-linear-gradient(
+    90deg,
+    var(--answer-c-bg) 0 24px,
+    var(--color-bg) 24px 32px,
+    var(--answer-a-bg) 32px 56px,
+    var(--color-bg) 56px 64px,
+    var(--answer-d-bg) 64px 88px,
+    var(--color-bg) 88px 96px
+  );
+}

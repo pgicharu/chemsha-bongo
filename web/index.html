@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/game.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page">
+      <h1 class="home-title">Chemsha Bongo!</h1>
+      <p class="home-lead">
+        Live trivia for the whole room. The quiz runs on the big screen, everyone answers on their phone, and the
+        quickest right answers win.
+      </p>
+
+      <section class="join-box" aria-labelledby="join-heading">
+        <h2 id="join-heading">Join a game</h2>
+        <form class="code-form" id="join-form" action="/play" method="get">
+          <label class="code-form__label" for="join-code">Enter the 6-digit code from the big screen</label>
+          <input class="code-input" id="join-code" name="code" type="text" inputmode="numeric" pattern="[0-9]{3} ?[0-9]{3}"
+            maxlength="7" autocomplete="off" placeholder="123456" required />
+          <p class="code-form__error" id="join-error" role="alert"></p>
+          <button class="button button--wide" type="submit">Join</button>
+        </form>
+      </section>
+
+      <section class="home-links" id="home-links" aria-label="Your account"></section>
+    </main>
+    <script type="module" src="./js/home.js"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Sign up · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page">
+      <section class="auth-card">
+        <div id="signup-panel">
+          <h1>Sign up</h1>
+          <p>Create an account to play, keep your scores and make your own quizzes.</p>
+          <p class="notice" id="notice" tabindex="-1" role="alert"></p>
+          <form class="auth-form" id="signup-form" novalidate>
+            <div class="field">
+              <label class="field__label" for="name">Your name</label>
+              <span class="field__hint" id="name-hint">This is what other players see.</span>
+              <input class="field__input" id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-hint name-error" maxlength="60" autocapitalize="words" />
+              <p class="field__error" id="name-error"></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="email">Email</label>
+              <input class="field__input" id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error" inputmode="email" autocapitalize="off" spellcheck="false" />
+              <p class="field__error" id="email-error"></p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="password">Password</label>
+              <span class="field__hint" id="password-hint">At least 8 characters.</span>
+              <input class="field__input" id="password" name="password" type="password" autocomplete="new-password" required aria-describedby="password-hint password-error" minlength="8" maxlength="200" />
+              <p class="field__error" id="password-error"></p>
+            </div>
+            <button class="button" type="submit">Create account</button>
+          </form>
+          <ul class="auth-links">
+            <li>Already have an account? <a id="login-link" href="/login">Log in</a></li>
+          </ul>
+        </div>
+
+        <div id="done-panel" hidden>
+          <h1 tabindex="-1" id="done-title">You're in!</h1>
+          <p class="notice" id="done-notice" role="status"></p>
+          <div class="actions">
+            <a class="button" id="continue-link" href="/">Continue</a>
+            <button class="button button--plain" type="button" id="resend-button" hidden>Resend email</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./js/auth/signup.js"></script>
+  </body>
+</html>

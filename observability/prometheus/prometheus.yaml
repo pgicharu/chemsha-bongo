@@ -1,0 +1,28 @@
+# Prometheus config; replaces the image's /otel-lgtm/prometheus.yaml.
+
+global:
+  scrape_interval: 10s
+  scrape_timeout: 5s
+  # Kept from the image; the app uses classic buckets.
+  scrape_native_histograms: true
+
+scrape_configs:
+  - job_name: chemsha-bongo
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["app:3000"]
+
+# Kept from the image: the collector and Tempo push metrics via OTLP/remote write.
+otlp:
+  keep_identifying_resource_attributes: true
+  promote_resource_attributes:
+    - service.instance.id
+    - service.name
+    - service.namespace
+    - service.version
+    - deployment.environment.name
+    - container.name
+    - host.name
+storage:
+  tsdb:
+    out_of_order_time_window: 10m

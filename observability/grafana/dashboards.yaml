@@ -1,0 +1,4 @@
+# Replaces the image's dashboard provisioning so Grafana starts with no
+# dashboards. Reference dashboards: `make dashboards-up` (dashboards/).
+apiVersion: 1
+providers: []

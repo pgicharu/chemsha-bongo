@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Account · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page">
+      <section class="auth-card" id="account" aria-busy="true">
+        <h1>Your account</h1>
+        <div class="profile">
+          <div id="avatar"></div>
+          <p class="profile__name" id="name"></p>
+        </div>
+        <dl class="details">
+          <div>
+            <dt>Email</dt>
+            <dd id="email"></dd>
+          </div>
+          <div>
+            <dt>Email confirmed</dt>
+            <dd id="confirmed"></dd>
+          </div>
+        </dl>
+        <p class="notice" id="notice" tabindex="-1" role="status"></p>
+        <div class="actions">
+          <button class="button" type="button" id="resend-button" hidden>Resend confirmation email</button>
+          <a class="button button--plain" href="/avatar">Edit avatar</a>
+          <button class="button button--plain" type="button" id="logout-button">Log out</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./js/auth/account.js"></script>
+  </body>
+</html>

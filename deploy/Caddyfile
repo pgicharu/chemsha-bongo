@@ -1,0 +1,65 @@
+# Public entry point in production (docker-compose.prod.yml): APP_DOMAIN ->
+# app:3000, GRAFANA_DOMAIN -> lgtm:3000. Nothing else is proxied. The app's
+# fault-injection (chaos) control port must never be proxied.
+# Apply edits with `make prod-caddy-reload`. {$NAME} values come from .env.
+
+# --- Global options ----------------------------------------------------------
+{
+	# Automatic HTTPS needs DNS pointing here and ports 80/443 open.
+	# *.localhost names get Caddy's local CA instead (hence `curl -k` locally).
+	email {$ACME_EMAIL}
+}
+
+# --- Shared settings ---------------------------------------------------------
+(common) {
+	# JSON access logs to stdout, shipped to Loki by Alloy. Caddy redacts
+	# Cookie and Authorization headers.
+	log {
+		output stdout
+		format json
+	}
+
+	encode zstd gzip
+
+	# `?` sets a header only if the upstream did not (helmet and Grafana win).
+	# Separate lines on purpose: inside one header { } block, Caddy would add
+	# the defaults only if all of them were missing.
+	header ?Strict-Transport-Security "max-age=31536000"
+	header ?X-Content-Type-Options "nosniff"
+	header ?Referrer-Policy "strict-origin-when-cross-origin"
+	header ?X-Frame-Options "DENY"
+	header -Server
+}
+
+# --- The game ----------------------------------------------------------------
+{$APP_DOMAIN} {
+	import common
+
+	# /metrics is public. Prometheus scrapes it inside Docker, so uncomment the
+	# next line to hide it from the internet (the * also covers /metrics/).
+	# respond /metrics* 404
+
+	# The app trusts exactly one proxy hop ('trust proxy' in src/server.js),
+	# so rate limits see the client address from X-Forwarded-For.
+	reverse_proxy app:3000 {
+		# Keep open sockets alive up to 5 minutes across config reloads.
+		stream_close_delay 5m
+	}
+}
+
+# --- Grafana -----------------------------------------------------------------
+{$GRAFANA_DOMAIN} {
+	import common
+	reverse_proxy lgtm:3000 {
+		stream_close_delay 5m
+	}
+}
+
+# --- Uptime Kuma (optional, OFF by default) ----------------------------------
+# To publish: set UPTIME_DOMAIN, add DNS, create the admin account through an
+# SSH tunnel first, then uncomment and run `make prod-up`.
+#
+# {$UPTIME_DOMAIN} {
+# 	import common
+# 	reverse_proxy uptime-kuma:3001
+# }

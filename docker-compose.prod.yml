@@ -1,0 +1,99 @@
+# Production override, used on top of docker-compose.yml (make prod-up; DEPLOY.md).
+# Only Caddy publishes on a public address: Docker's own iptables rules bypass
+# ufw, so any 0.0.0.0 port would be reachable from the internet. Monitoring
+# UIs stay on 127.0.0.1 for SSH tunnels.
+# `!reset []` empties a base list; `!override` replaces it (plain `ports:`
+# would append). ${VAR:?message} refuses to start without the variable.
+
+# Anchors don't cross files, so the logging block is repeated for Caddy.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  caddy:
+    image: caddy:2.11.7
+    ports:
+      - "80:80"         # HTTP: certificate checks, then redirect to HTTPS
+      - "443:443"       # HTTPS
+      - "443:443/udp"   # HTTP/3 (QUIC)
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN in .env (see DEPLOY.md)}
+      GRAFANA_DOMAIN: ${GRAFANA_DOMAIN:?set GRAFANA_DOMAIN in .env (see DEPLOY.md)}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env (see DEPLOY.md)}
+      UPTIME_DOMAIN: ${UPTIME_DOMAIN:-}
+    volumes:
+      # The directory, not the file: a single-file bind mount goes stale when
+      # an editor replaces the file on save.
+      - ./deploy:/etc/caddy:ro
+      # Certificates. Keep it: Let's Encrypt issuance is rate-limited.
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+      - lgtm
+    restart: unless-stopped
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  app:
+    # No host port: only Caddy (inside Docker) talks to the app.
+    ports: !reset []
+    environment:
+      NODE_ENV: production
+      # https here also makes the session cookie Secure (src/auth/session.js).
+      APP_BASE_URL: https://${APP_DOMAIN:?set APP_DOMAIN in .env}
+      ALLOW_BOTS: "false"
+      # The "log" transport would put login links in logs visible in Grafana.
+      EMAIL_TRANSPORT: smtp
+
+  postgres:
+    # No host port; use make psql.
+    ports: !reset []
+
+  lgtm:
+    # Grafana goes through Caddy; Prometheus stays on 127.0.0.1 for a tunnel.
+    ports: !override
+      - "127.0.0.1:9090:9090"
+    environment:
+      # The image enables anonymous Admin unless this is false.
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      # Applied only on first start with an empty lgtm-data volume (DEPLOY.md).
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_ALLOW_ORG_CREATE: "false"
+      GF_USERS_AUTO_ASSIGN_ORG_ROLE: Viewer
+      # Lets Viewers use Explore (Grafana 13 otherwise limits it to Editors).
+      GF_USERS_VIEWERS_CAN_EDIT: "true"
+      GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN:?set GRAFANA_DOMAIN in .env}/
+      GF_SECURITY_COOKIE_SECURE: "true"
+      # Don't send users' email hashes to gravatar.com.
+      GF_SECURITY_DISABLE_GRAVATAR: "true"
+
+  alloy:
+    ports: !override
+      - "127.0.0.1:12345:12345"
+
+  uptime-kuma:
+    # Optional (COMPOSE_PROFILES); publishing via Caddy: deploy/Caddyfile.
+    profiles: ["uptime"]
+    ports: !override
+      - "127.0.0.1:3002:3001"
+
+  netdata:
+    profiles: ["netdata"]
+    ports: !override
+      - "127.0.0.1:19999:19999"
+
+  mailpit:
+    # Not used in production; never published if started anyway.
+    ports: !reset []
+
+volumes:
+  caddy-data:
+  caddy-config:

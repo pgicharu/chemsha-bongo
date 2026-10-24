@@ -1,0 +1,20 @@
+/* Self-paced quiz (/take). Mostly styled by game.css; these are the extras. */
+
+.take-rules {
+  width: 100%;
+  max-width: 24rem;
+  margin: 0 0 0.5rem;
+  padding: 1rem 1rem 1rem 2.25rem;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.take-rules li + li {
+  margin-top: 0.5rem;
+}
+
+.stats.take-stats {
+  grid-template-columns: 1fr;
+}

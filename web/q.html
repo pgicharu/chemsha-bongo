@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Quiz · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/quizzes.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page">
+      <p id="loading">Loading the quiz…</p>
+      <p class="notice notice--error" id="load-error" hidden></p>
+
+      <section class="landing" id="landing" hidden>
+        <p class="landing__kicker" id="kicker"></p>
+        <h1 id="title"></h1>
+        <p class="landing__owner" id="owner"></p>
+
+        <!-- maxlength 7 allows the code typed with a space, as the projector shows it ("482 913"). -->
+        <form class="code-form" id="live" action="/play" method="get" novalidate hidden>
+          <label for="code">Ask your host for the 6-digit code</label>
+          <input class="input code-input" id="code" name="code" type="text" inputmode="numeric" autocomplete="off"
+            pattern="[0-9]{3} ?[0-9]{3}" maxlength="7" placeholder="123456" aria-describedby="code-error" />
+          <p class="field-error" id="code-error" hidden>The code is 6 digits, like 482 913.</p>
+          <button class="button button--big" type="submit">Join game</button>
+        </form>
+
+        <div id="self-paced" hidden>
+          <dl class="summary">
+            <div class="summary__item">
+              <dt>Questions</dt>
+              <dd id="question-count"></dd>
+            </div>
+            <div class="summary__item">
+              <dt>Due</dt>
+              <dd id="due"></dd>
+            </div>
+          </dl>
+          <a class="button button--big" id="start" href="/take" hidden>Start</a>
+          <p class="notice" id="self-paced-status" role="status" hidden></p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./js/quizzes/landing.js"></script>
+  </body>
+</html>

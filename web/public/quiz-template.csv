@@ -1,0 +1,4 @@
+question,answer_a,answer_b,answer_c,answer_d,correct,time_limit
+Which signal answers "how many requests per second?",Logs,Metrics,Traces,Alerts,B,20
+Which tool in our stack stores traces?,Loki,Prometheus,Tempo,Alloy,C,
+"A label like player_id on a metric causes high ___, so avoid it","latency","cardinality","availability","retention",B,30

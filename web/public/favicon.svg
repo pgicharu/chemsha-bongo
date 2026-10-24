@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Chemsha Bongo: the four answer shapes on asphalt, in the Matatu Mural
+       theme colours (an SVG file can't read the theme's CSS variables). -->
+  <rect x="2" y="2" width="60" height="60" rx="10" fill="#141414" stroke="#f4f1ea" stroke-width="4"/>
+  <path d="M19 10 L29 27 H9 Z" fill="#e63b2e"/>
+  <path d="M45 8 L55 18.5 L45 29 L35 18.5 Z" fill="#1f6feb"/>
+  <circle cx="19" cy="45" r="10" fill="#f5b700"/>
+  <rect x="36" y="36" width="18" height="18" fill="#00a651"/>
+</svg>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>My quizzes · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/quizzes.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page page--wide">
+      <div class="page-head">
+        <h1>My quizzes</h1>
+        <a class="button button--big" href="/edit">+ New quiz</a>
+      </div>
+
+      <p class="notice" id="notice" role="status" aria-live="polite" hidden></p>
+
+      <p id="loading">Loading your quizzes…</p>
+      <ul class="quiz-list" id="quiz-list" hidden></ul>
+
+      <section class="empty" id="empty" hidden>
+        <h2>No quizzes yet</h2>
+        <p>A quiz is a list of questions, each with four answers and one correct one.</p>
+        <ol>
+          <li>Press <strong>New quiz</strong> and give it a title.</li>
+          <li>Add your questions and mark the right answer for each.</li>
+          <li>Choose <strong>Live</strong> to run it on a projector with a 6-digit code, or <strong>Self-paced</strong> to share a link people play on their own.</li>
+        </ol>
+        <a class="button button--big" href="/edit">Make my first quiz</a>
+      </section>
+    </main>
+    <script type="module" src="./js/quizzes/list.js"></script>
+  </body>
+</html>

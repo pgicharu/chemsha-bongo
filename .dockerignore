@@ -1,0 +1,9 @@
+# Allowlist: only what the Dockerfile copies is in the build context.
+*
+!package.json
+!package-lock.json
+!vite.config.js
+!web
+!src
+!migrations
+!scripts

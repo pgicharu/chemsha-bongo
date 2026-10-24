@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Results · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/quizzes.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page page--wide">
+      <p class="back"><a href="/quizzes">← My quizzes</a></p>
+      <h1 id="heading">Results</h1>
+
+      <p id="loading">Loading results…</p>
+      <p class="notice notice--error" id="load-error" hidden></p>
+
+      <section id="results" hidden>
+        <dl class="summary">
+          <div class="summary__item">
+            <dt>Attempts</dt>
+            <dd id="attempt-count"></dd>
+          </div>
+          <div class="summary__item">
+            <dt>Average score</dt>
+            <dd id="average-score"></dd>
+          </div>
+        </dl>
+
+        <div class="actions">
+          <a class="button" id="download" download>Download CSV</a>
+        </div>
+
+        <p class="empty-note" id="no-attempts" hidden>
+          Nobody has played this quiz yet. Results show up here as soon as someone does.
+          Bots never appear in results.
+        </p>
+
+        <div class="table-scroll" id="table-wrap" tabindex="0" role="region" aria-label="Attempts table, scrolls sideways">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th scope="col">Player</th>
+                <th scope="col" id="score-header">
+                  <button type="button" class="sort-button" id="sort-score">Score <span aria-hidden="true" id="sort-arrow">↕</span></button>
+                </th>
+                <th scope="col">Correct</th>
+                <th scope="col">Rank</th>
+                <th scope="col">Mode</th>
+                <th scope="col">Finished</th>
+                <th scope="col">Email</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./js/quizzes/results.js"></script>
+  </body>
+</html>

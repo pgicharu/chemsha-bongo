@@ -1,0 +1,7 @@
+# Adds the reference dashboards from dashboards/ to Grafana (make dashboards-up).
+# Running plain `make up` again removes them.
+services:
+  lgtm:
+    volumes:
+      - ./dashboards/provisioning.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/reference.yaml:ro
+      - ./dashboards:/otel-lgtm/reference-dashboards:ro

@@ -1,0 +1,76 @@
+# Grafana data sources; replaces the image's file. Restart lgtm to apply.
+# "$$" is a literal "$"; ${GRAFANA_DB_PASSWORD} and ${POSTGRES_DB} are env vars.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    url: http://127.0.0.1:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      # Must match the scrape interval for $__rate_interval.
+      timeInterval: 10s
+
+  - name: Loki
+    type: loki
+    uid: loki
+    url: http://127.0.0.1:3100
+    editable: true
+    jsonData:
+      # Links a log line's trace_id to Tempo.
+      derivedFields:
+        - name: trace_id
+          matcherType: regex
+          matcherRegex: '"trace_id":"([0-9a-f]{32})"'
+          url: "$${__value.raw}"
+          datasourceUid: tempo
+          urlDisplayLabel: "Open trace"
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    url: http://127.0.0.1:3200
+    editable: true
+    jsonData:
+      # Span -> logs with the same service_name and trace_id.
+      tracesToLogsV2:
+        datasourceUid: loki
+        customQuery: true
+        query: '{$${__tags}} | trace_id = "$${__trace.traceId}"'
+        tags:
+          - key: service.name
+            value: service_name
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      lokiSearch:
+        datasourceUid: loki
+
+  # Kept from the image; Grafana's profiles view expects it. Unused by the app.
+  - name: Pyroscope
+    type: grafana-pyroscope-datasource
+    uid: pyroscope
+    url: http://127.0.0.1:4040
+
+  # Read-only as grafana_reader (src/grafana-reader.js): SELECT on a few
+  # tables and non-sensitive user columns only; no emails, hashes or sessions.
+  - name: Postgres
+    type: grafana-postgresql-datasource
+    uid: postgres
+    url: postgres:5432
+    user: grafana_reader
+    editable: true
+    jsonData:
+      database: ${POSTGRES_DB}
+      sslmode: disable
+      postgresVersion: 1500
+      maxOpenConns: 3
+    secureJsonData:
+      password: ${GRAFANA_DB_PASSWORD}

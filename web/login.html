@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Log in · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/auth.css" />
+  </head>
+  <body>
+    <div class="trim"></div>
+    <main class="page">
+      <section class="auth-card">
+        <h1>Log in</h1>
+        <p class="notice" id="notice" tabindex="-1" role="alert"></p>
+        <form class="auth-form" id="login-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="email">Email</label>
+            <input class="field__input" id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error" inputmode="email" autocapitalize="off" spellcheck="false" />
+            <p class="field__error" id="email-error"></p>
+          </div>
+          <div class="field">
+            <label class="field__label" for="password">Password</label>
+            <input class="field__input" id="password" name="password" type="password" autocomplete="current-password" required aria-describedby="password-error" />
+            <p class="field__error" id="password-error"></p>
+          </div>
+          <button class="button" type="submit">Log in</button>
+        </form>
+        <ul class="auth-links">
+          <li><a href="/forgot">Forgot your password?</a></li>
+          <li>New here? <a id="signup-link" href="/signup">Create an account</a></li>
+        </ul>
+      </section>
+    </main>
+    <script type="module" src="./js/auth/login.js"></script>
+  </body>
+</html>

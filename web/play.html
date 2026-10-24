@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Play · Chemsha Bongo</title>
+    <link rel="stylesheet" href="./css/theme-matatu.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/game.css" />
+  </head>
+  <body class="play">
+    <div class="trim"></div>
+
+    <header class="play-bar">
+      <span class="play-bar__title" id="quiz-title">Chemsha Bongo</span>
+      <span class="play-bar__score" id="bar-score" hidden></span>
+    </header>
+
+    <p class="play-offline" id="offline" role="status" aria-live="polite" hidden>Reconnecting…</p>
+
+    <main class="play-stage">
+      <section data-screen="loading" class="play-center">
+        <p class="play-big">Connecting…</p>
+      </section>
+
+      <section data-screen="code" class="play-center" hidden>
+        <h1>Join a game</h1>
+        <form class="code-form" id="code-form">
+          <label class="code-form__label" for="code-input">Game code</label>
+          <input class="code-input" id="code-input" name="code" type="text" inputmode="numeric" pattern="[0-9]{3} ?[0-9]{3}"
+            maxlength="7" autocomplete="off" placeholder="123456" required />
+          <p class="code-form__error" id="code-error" role="alert"></p>
+          <button class="button button--wide" type="submit">Join</button>
+        </form>
+      </section>
+
+      <section data-screen="lobby" class="play-center" hidden>
+        <div id="lobby-avatar"></div>
+        <h1>You're in!</h1>
+        <p class="play-big" id="lobby-name"></p>
+        <p>Look at the big screen. The game starts soon.</p>
+        <p class="play-muted" id="lobby-count"></p>
+      </section>
+
+      <section data-screen="question" class="play-question" hidden>
+        <div class="play-qhead">
+          <p class="play-qcount" id="q-count"></p>
+          <p class="timer timer--small" id="q-timer" aria-label="Seconds left">0</p>
+        </div>
+        <h1 class="play-prompt" id="q-prompt"></h1>
+        <div class="play-answers" id="q-options"></div>
+        <p class="play-error" id="q-error" role="alert"></p>
+      </section>
+
+      <section data-screen="locked" class="play-center" hidden>
+        <h1>Answer locked in</h1>
+        <div id="locked-choice"></div>
+        <p>Wait for the others…</p>
+      </section>
+
+      <section data-screen="timeup" class="play-center" hidden>
+        <h1 id="timeup-title">Time's up!</h1>
+        <p>Look at the big screen.</p>
+      </section>
+
+      <section data-screen="result" class="play-center" hidden>
+        <p class="result-badge" id="result-badge"></p>
+        <p class="play-big" id="result-points"></p>
+        <div class="play-correct" id="result-correct" hidden>
+          <p>The answer was</p>
+          <div id="result-correct-tile"></div>
+        </div>
+        <dl class="stats">
+          <div><dt>Total</dt><dd id="result-total"></dd></div>
+          <div><dt>Rank</dt><dd id="result-rank"></dd></div>
+        </dl>
+      </section>
+
+      <section data-screen="leaderboard" class="play-center" hidden>
+        <h1>Leaderboard</h1>
+        <p>Eyes on the big screen!</p>
+        <dl class="stats">
+          <div><dt>Your score</dt><dd id="board-total"></dd></div>
+          <div><dt>Your rank</dt><dd id="board-rank"></dd></div>
+        </dl>
+      </section>
+
+      <section data-screen="finished" class="play-center" hidden>
+        <h1>Game over</h1>
+        <p class="play-big" id="final-rank"></p>
+        <dl class="stats">
+          <div><dt>Score</dt><dd id="final-score"></dd></div>
+          <div><dt>Correct</dt><dd id="final-correct"></dd></div>
+        </dl>
+        <h2>Top 5</h2>
+        <ol class="mini-board" id="final-board"></ol>
+        <a class="button" href="/">Home</a>
+      </section>
+
+      <section data-screen="error" class="play-center" hidden>
+        <h1>Hmm.</h1>
+        <p class="play-big" id="error-text"></p>
+        <a class="button" id="error-action" href="/play">Try another code</a>
+      </section>
+    </main>
+
+    <script type="module" src="./js/game/play.js"></script>
+  </body>
+</html>

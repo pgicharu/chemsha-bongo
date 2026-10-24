@@ -1,0 +1,96 @@
+// Grafana Alloy: tails Docker's json-file logs for this Compose project and
+// pushes them to Loki. The Docker socket is used only for discovery/labels.
+
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "10s"
+
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=chemsha-bongo"]
+  }
+}
+
+// Labels must stay low-cardinality: each label set is a Loki stream, so ids
+// (container id, player, game, trace) stay in the log line, never in labels.
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  // The host's containers dir is mounted at the same path.
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "__path__"
+    replacement   = "/var/lib/docker/containers/$1/$1-json.log"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+local.file_match "containers" {
+  path_targets = discovery.relabel.containers.output
+}
+
+loki.source.file "containers" {
+  targets    = local.file_match.containers.targets
+  forward_to = [loki.process.containers.receiver]
+}
+
+loki.process "containers" {
+  stage.docker {}
+
+  // Non-JSON lines (e.g. Postgres) pass through unchanged.
+  stage.json {
+    expressions = {
+      level        = "level",
+      event        = "event",
+      trace_id     = "trace_id",
+      span_id      = "span_id",
+      service_name = "service",
+    }
+  }
+
+  // service_name matches the traces' service.name, for trace-to-logs links.
+  stage.labels {
+    values = {
+      level        = "",
+      service_name = "",
+    }
+  }
+
+  // High-cardinality fields: structured metadata, not labels.
+  stage.structured_metadata {
+    values = {
+      event    = "",
+      trace_id = "",
+      span_id  = "",
+    }
+  }
+
+  // filename contains the container id, which changes on every recreate;
+  // keep it as metadata and drop the label.
+  stage.structured_metadata {
+    values = {
+      filename = "filename",
+    }
+  }
+  stage.label_drop {
+    values = ["filename"]
+  }
+
+  forward_to = [loki.write.lgtm.receiver]
+}
+
+loki.write "lgtm" {
+  endpoint {
+    url = "http://lgtm:3100/loki/api/v1/push"
+  }
+}

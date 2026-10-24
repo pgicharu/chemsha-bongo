@@ -1,0 +1,11 @@
+# Provisions the reference dashboards. Used only by docker-compose.dashboards.yml.
+# No folder: when the file is no longer mounted, Grafana removes the
+# dashboards and leaves nothing behind (an empty folder would remain).
+apiVersion: 1
+providers:
+  - name: reference
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /otel-lgtm/reference-dashboards
