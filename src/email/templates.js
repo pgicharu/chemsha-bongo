@@ -64,6 +64,37 @@ export function confirmEmail({ name, link }) {
   };
 }
 
+// Sent when someone signs up with an address that already has a confirmed account.
+export function accountExistsEmail({ name, loginLink, resetLink }) {
+  return {
+    template: 'account_exists',
+    subject: `You already have a ${APP_NAME} account`,
+    text: [
+      `Hi ${name},`,
+      '',
+      'Someone (hopefully you) tried to sign up with this email address, but it already has an account. Log in here:',
+      '',
+      loginLink,
+      '',
+      'Forgot your password? Choose a new one here:',
+      '',
+      resetLink,
+      '',
+      "If this wasn't you, ignore this email: nothing has changed.",
+    ].join('\n'),
+    html: layout({
+      paragraphs: [
+        `Hi ${escapeHtml(name)},`,
+        'Someone (hopefully you) tried to sign up with this email address, but it already has an account.',
+        `Forgot your password? <a href="${escapeHtml(resetLink)}">Choose a new one</a>.`,
+      ],
+      buttonLabel: 'Log in',
+      link: loginLink,
+      footer: "If this wasn't you, ignore this email: nothing has changed.",
+    }),
+  };
+}
+
 export function resetEmail({ name, link }) {
   return {
     template: 'reset',

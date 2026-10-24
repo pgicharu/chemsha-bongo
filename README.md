@@ -55,8 +55,9 @@ local network so phones can join.
 
 ### Signing up locally
 
-With the default `EMAIL_TRANSPORT=log`, no email is sent: confirmation and
-password-reset links are printed in the app's logs:
+Sign-up finishes when the confirmation link is opened; that link also logs
+you in. With the default `EMAIL_TRANSPORT=log`, no email is sent: confirmation
+and password-reset links are printed in the app's logs:
 
 ```sh
 docker compose logs app | grep email.logged

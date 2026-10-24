@@ -6,10 +6,11 @@ import { logger } from '../logger.js';
 import { transaction } from '../db.js';
 import { randomAvatar } from '../avatars.js';
 import { sendEmail } from '../email/index.js';
-import { confirmEmail, resetEmail } from '../email/templates.js';
+import { accountExistsEmail, confirmEmail, resetEmail } from '../email/templates.js';
 import { hashPassword, verifyAgainstDummy, verifyPassword } from './passwords.js';
 import { createEmailToken, isTokenForConfirmedUser, useEmailToken } from './tokens.js';
 import { createUser, findUserForLogin, toPublicUser } from './users.js';
+import { safeNextPath } from './next-path.js';
 import { SESSION_COOKIE_NAME, sessionCookieOptions, deleteUserSessions, logIn, logOut } from './session.js';
 import { authRateLimit } from './rate-limit.js';
 import { requireUser } from './guards.js';
@@ -74,10 +75,32 @@ function validate(res, checks) {
 // ---- Emails -----------------------------------------------------------------
 
 // Throws if the email could not be sent.
-async function sendConfirmationEmail(user) {
+// `next` (a path on this site) is where the confirmation link continues to.
+async function sendConfirmationEmail(user, next = null) {
   const token = await createEmailToken(user.id, 'confirm');
-  const link = `${config.baseUrl}/confirm?token=${token}`;
+  const nextParam = next ? `&next=${encodeURIComponent(next)}` : '';
+  const link = `${config.baseUrl}/confirm?token=${token}${nextParam}`;
   await sendEmail({ to: user.email, ...confirmEmail({ name: user.name, link }) });
+}
+
+// Sign-up with a registered address: an unconfirmed account gets a fresh
+// confirmation link, a confirmed one a "you already have an account" email.
+// Throws if the email could not be sent.
+async function sendExistingAccountEmail(email, next) {
+  const row = await findUserForLogin(email);
+  if (!row) return;
+  const user = toPublicUser(row);
+  logger.info({ event: 'auth.signup_existing', player_id: user.id, confirmed: user.confirmed }, 'Sign-up for an existing account');
+  if (!user.confirmed) return sendConfirmationEmail(user, next);
+  const nextQuery = next ? `?next=${encodeURIComponent(next)}` : '';
+  await sendEmail({
+    to: user.email,
+    ...accountExistsEmail({
+      name: user.name,
+      loginLink: `${config.baseUrl}/login${nextQuery}`,
+      resetLink: `${config.baseUrl}/forgot`,
+    }),
+  });
 }
 
 // Does not throw on a failed send: sendEmail() logs it and the response is already sent.
@@ -100,6 +123,9 @@ async function sendResetEmail(email) {
 
 // ---- Sign-up ----------------------------------------------------------------
 
+// Answers the same whether or not the address is registered, so sign-up cannot
+// be used to find out who has an account: the email tells the address owner.
+// Nobody is logged in here; the confirmation link does that.
 authRouter.post('/api/signup', authRateLimit('signup'), async (req, res) => {
   const input = validate(res, () => ({
     name: cleanName(req.body?.name),
@@ -107,35 +133,24 @@ authRouter.post('/api/signup', authRateLimit('signup'), async (req, res) => {
     password: cleanPassword(req.body?.password),
   }));
   if (!input) return;
+  const next = safeNextPath(req.body?.next);
 
-  const user = await createUser({
-    name: input.name,
-    email: input.email,
-    passwordHash: await hashPassword(input.password),
-    avatar: randomAvatar(),
-  });
-  if (!user) {
-    return res.status(409).json({
-      error: 'There is already an account with this email. Try logging in instead.',
-      code: 'email_taken',
-      field: 'email',
-    });
-  }
-
-  await logIn(req, user.id);
-  logger.info({ event: 'auth.signup', player_id: user.id }, 'New account created');
+  // Hashed in both cases so the response time does not tell them apart.
+  const passwordHash = await hashPassword(input.password);
+  const user = await createUser({ name: input.name, email: input.email, passwordHash, avatar: randomAvatar() });
+  if (user) logger.info({ event: 'auth.signup', player_id: user.id }, 'New account created');
 
   // Waits for the send, so SMTP latency shows in the sign-up request and span.
-  // A failed send still leaves the account created and logged in.
   let emailSent = true;
   try {
-    await sendConfirmationEmail(user);
+    if (user) await sendConfirmationEmail(user, next);
+    else await sendExistingAccountEmail(input.email, next);
   } catch {
     // Already logged by sendEmail() as email.failed.
     emailSent = false;
   }
 
-  res.status(201).json({ user, emailSent });
+  res.status(202).json({ emailSent });
 });
 
 // ---- Email confirmation -----------------------------------------------------
@@ -153,6 +168,8 @@ authRouter.post('/api/confirm', async (req, res) => {
   });
 
   if (userId) {
+    // The one-time link proves control of the address, so it also logs in.
+    await logIn(req, userId);
     logger.info({ event: 'auth.confirmed', player_id: userId }, 'Email confirmed');
     return res.json({ confirmed: true });
   }
@@ -160,7 +177,7 @@ authRouter.post('/api/confirm', async (req, res) => {
     return res.json({ confirmed: true, alreadyConfirmed: true });
   }
   res.status(400).json({
-    error: 'This confirmation link is invalid or has expired. Log in and ask for a new one.',
+    error: 'This confirmation link is invalid or has expired. Sign up again with the same email to get a new one.',
     code: 'invalid_token',
   });
 });

@@ -35,43 +35,46 @@ form.addEventListener('submit', async (event) => {
   });
   if (invalid) return;
 
+  // The same answer whether or not the address already has an account; the
+  // email says which. The link in it logs in and continues to `next`.
+  const body = { name, email, password, next };
   try {
-    // Slow: the server sends the welcome email before answering.
-    const result = await whileBusy(form, 'Creating account…', () => api.post('/api/signup', { name, email, password }));
-    showDone(result, email);
+    const result = await whileBusy(form, 'Creating account…', () => api.post('/api/signup', body));
+    showDone(result, body);
   } catch (err) {
     showError(form, notice, err);
   }
 });
 
-function showDone({ user, emailSent }, email) {
+function showDone({ emailSent }, body) {
   document.getElementById('signup-panel').hidden = true;
   document.getElementById('done-panel').hidden = false;
-  document.getElementById('done-title').textContent = `Karibu, ${user.name}!`;
-  document.getElementById('continue-link').href = next;
-
   const doneNotice = document.getElementById('done-notice');
   const resend = document.getElementById('resend-button');
-  if (emailSent) {
-    setNotice(doneNotice, `We sent a confirmation link to ${email}. Open it to create quizzes and save your scores.`, 'success');
-  } else {
-    setNotice(doneNotice, "Your account is ready, but we couldn't send the confirmation email. Try sending it again.");
-    resend.hidden = false;
-  }
+  showSent(doneNotice, emailSent, body.email);
 
+  // Sending the same sign-up again sends a fresh link.
   resend.addEventListener('click', async () => {
     resend.disabled = true;
     try {
-      await api.post('/api/confirm/resend');
-      setNotice(doneNotice, `We sent a confirmation link to ${email}.`, 'success');
-      resend.hidden = true;
+      const result = await api.post('/api/signup', body);
+      showSent(doneNotice, result.emailSent, body.email);
     } catch (err) {
       setNotice(doneNotice, errorMessage(err));
+    } finally {
       resend.disabled = false;
     }
   });
 
   document.getElementById('done-title').focus();
+}
+
+function showSent(doneNotice, emailSent, email) {
+  if (emailSent) {
+    setNotice(doneNotice, `We sent a link to ${email}. Open it on this device to finish signing up. Check the spam folder if it doesn't arrive.`, 'success');
+  } else {
+    setNotice(doneNotice, "We couldn't send the email just now. Try again in a minute.");
+  }
 }
 
 if (await getMe()) {
